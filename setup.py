@@ -1,12 +1,14 @@
 import io
 import os
 import re
+import subprocess
 from typing import Any
 
 from setuptools import find_packages, setup
 
 
 VERSION_RE = re.compile(r"__version__\s*=\s*\"(.*?)\"")
+GIT_DESCRIBE_RE = re.compile(r"^v\d+\.\d+\.\d+-(\d+)-g([0-9a-fA-F]+)$")
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -18,7 +20,25 @@ def read(*args: Any) -> str:
 def get_version() -> str:
     """Reads the version from this module."""
     init = read("ggshield", "__init__.py")
-    return VERSION_RE.search(init).group(1)  # type: ignore
+    match = VERSION_RE.search(init)
+    assert match
+    version = match.group(1)
+
+    if os.path.exists(os.path.join(HERE, ".git")):
+        # `git describe` output is <tag>-<n_commits>-g<sha>, unless we are on a tag, in
+        # which case the output is just <tag>.
+        # If we are not on a tag, then add <n_commits> and <sha> to the version number
+        # so that users installing from git know which version they are running.
+        out = (
+            subprocess.check_output(["git", "describe"], cwd=HERE)
+            .strip()
+            .decode("utf-8")
+        )
+        match = GIT_DESCRIBE_RE.match(out)
+        if match:
+            n_commits, sha = match.groups()
+            version = f"{version}+{n_commits}.{sha}"
+    return version
 
 
 setup(
