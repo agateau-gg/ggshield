@@ -71,7 +71,7 @@ jobs:
         id: tags
         shell: bash
         run: |
-          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
 
       - name: Download packages
         uses: actions/download-artifact@v3
@@ -147,7 +147,7 @@ jobs:
         id: tags
         shell: bash
         run: |
-          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
 
       - name: Checkout Homebrew-tap
         uses: actions/checkout@master
