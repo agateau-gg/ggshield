@@ -133,7 +133,7 @@ jobs:
           tags: latest
 
   push_to_tap:
-    needs: push_to_pypi
+    #needs: build_packages
     name: Push to GitGuardian taps
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
@@ -153,14 +153,12 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: GitGuardian/homebrew-tap
-          token: ${{ secrets.PAT_GITHUB }}
           path: ./homebrew-tap
 
       - name: Checkout Homebrew-ggshield
         uses: actions/checkout@master
         with:
           repository: GitGuardian/homebrew-ggshield
-          token: ${{ secrets.PAT_GITHUB }}
           path: ./homebrew-ggshield
 
       - name: Install dependencies
