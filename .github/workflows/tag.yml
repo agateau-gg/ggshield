@@ -165,7 +165,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          
+
           pip install homebrew-pypi-poet
 
           # Install the newly released version of ggshield. Retry in case of
@@ -174,13 +174,15 @@ jobs:
           version=${GITHUB_REF/refs\/tags\/v/}
           max_tries=5
           for try in $(seq 1 $max_tries) ; do
+              # Sleep first, to increase the chances of the first download
+              # succeeding
+              sleep 5
               echo "Downloading ggshield==$version, attempt $try/$max_tries"
               if pip install ggshield==$version ; then
                   exit 0
-              else
-                  sleep 10
               fi
           done
+          exit 1
 
       - name: Update Homebrew formulas
         run: |
