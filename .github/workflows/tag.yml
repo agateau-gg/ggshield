@@ -147,7 +147,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: GitGuardian/homebrew-tap
-          token: ${{ secrets.PAT_GITHUB }}
+          #token: ${{ secrets.PAT_GITHUB }}
 
       - name: Update Homebrew-tap
         run: |
@@ -157,8 +157,9 @@ jobs:
           git config user.email github-actions@github.com
 
           scripts/update-ggshield --commit "$version"
+          git show
 
-          git push
+          #git push
 
   push_to_cloudsmith:
     needs: build_packages
