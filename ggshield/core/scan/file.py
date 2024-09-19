@@ -3,6 +3,7 @@ from typing import List, Pattern, Set, Tuple, Union
 
 from ggshield.utils.files import ListFilesMode, is_path_binary, list_files, url_for_path
 
+from .converter_file import ConverterFile, get_converter
 from .scannable import Scannable
 
 
@@ -64,10 +65,11 @@ def create_files_from_paths(
     files: List[Scannable] = []
     binary_paths: List[Path] = []
     for path in filepaths:
-        if is_path_binary(path):
+        if converter := get_converter(path):
+            files.append(ConverterFile(path, converter))
+        elif is_path_binary(path):
             binary_paths.append(path)
-            continue
-
-        files.append(File(path))
+        else:
+            files.append(File(path))
 
     return (files, binary_paths)
